@@ -1,43 +1,614 @@
-
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="كام مقاسي - أداة لقياس الملابس بدقة وسهولة">
-  <title>كام مقاسي - حدد مقاسك بدقة</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Smart Size Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --warning: #f8961e;
+      --danger: #f94144;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      text-align: center;
+      padding: 20px;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    .container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      font-size: 28px;
+      color: var(--primary);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #495057;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 15px;
+      margin: 5px 0;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      background-color: #fff;
+      transition: all 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      border: none;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      background-color: #f8f9fa;
+      text-align: left;
+    }
+    .result-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .size-recommendation {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .brand-sizes {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .brand-size {
+      padding: 12px;
+      border-radius: 8px;
+      background-color: white;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid var(--primary);
+    }
+    .brand-name {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .note {
+      font-size: 14px;
+      color: #6c757d;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .error {
+      color: var(--danger);
+      font-weight: 600;
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      background-color: rgba(249, 65, 68, 0.1);
+    }
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #6c757d;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+    .tab.active {
+      color: var(--primary);
+      border-bottom: 3px solid var(--primary);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .measurement-help {
+      font-size: 14px;
+      color: #6c757d;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .bmi-indicator {
+      margin-top: 15px;
+      height: 10px;
+      border-radius: 5px;
+      background: linear-gradient(90deg, #4cc9f0, #4895ef, #4361ee, #3f37c9, #3a0ca3);
+      position: relative;
+    }
+    .bmi-marker {
+      position: absolute;
+      top: -5px;
+      width: 3px;
+      height: 20px;
+      background-color: var(--dark);
+    }
+    .bmi-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      font-size: 12px;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+      .brand-sizes {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header role="banner">
-    <h1 id="header-title" aria-label="اسم التطبيق: كام مقاسي">كام مقاسي</h1>
-    <p id="header-subtitle">سهولة بدقة مقاسك حدد</p>
-    <nav class="top-buttons" aria-label="أدوات التطبيق">
-      <button class="login-btn" id="login-btn" aria-label="تسجيل الدخول">الدخول/تسجيل</button>
-      <button class="register-btn" id="register-btn" aria-label="إنشاء حساب">حساب إنشاء</button>
-      <button class="lang-toggle" id="lang-toggle" aria-label="تبديل اللغة">EN</button>
-      <button class="mode-toggle" id="mode-toggle" aria-label="تبديل الوضع المظلم">🌓</button>
-    </nav>
-  </header>
-  
-  <main class="container" role="main">
-    <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
-      <div class="progress-step active" id="step1" aria-current="step">1. الفئة اختر</div>
-      <div class="progress-step" id="step2">2. النوع اختر</div>
-      <div class="progress-step" id="step3">3. القياسات أدخل</div>
-      <div class="progress-step" id="step4">4. الدفع</div>
-      <div class="progress-step" id="step5">5. النتيجة</div>
+  <div class="container" id="content">
+    <h2><i class="fas fa-tshirt"></i> Smart Size Calculator</h2>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('standard')">Standard</div>
+      <div class="tab" onclick="switchTab('detailed')">Detailed</div>
     </div>
-    
-    <section id="app-content" aria-live="polite">
-      <p>اختر فئة للبدء...</p>
-    </section>
-  </main>
-  
-  <footer role="contentinfo">
-    <p>&copy; 2025 كام مقاسي - جميع الحقوق محفوظة.</p>
-  </footer>
-  
-  <script src="script.js" defer></script>
+
+    <div id="standard-tab" class="tab-content active">
+      <div class="input-group">
+        <label for="gender">Gender</label>
+        <select id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="height">Height (cm)</label>
+        <input type="number" id="height" min="140" max="220" placeholder="Enter your height in cm" />
+        <div class="measurement-help">
+          <i class="fas fa-info-circle"></i> Measure without shoes
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="weight">Weight (kg)</label>
+        <input type="number" id="weight" min="30" max="150" placeholder="Enter your weight in kg" />
+        <div class="measurement-help">
+          <i class="fas fa-info-circle"></i> Measure in light clothing
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label for="category">Clothing Category</label>
+        <select id="category">
+          <option value="shirt">Shirt</option>
+          <option value="tshirt">T-Shirt</option>
+          <option value="pants">Pants</option>
+          <option value="jeans">Jeans</option>
+          <option value="hoodie">Hoodie</option>
+          <option value="jacket">Jacket</option>
+          <option value="dress">Dress (Women)</option>
+        </select>
+      </div>
+
+      <button onclick="calculateSize()"><i class="fas fa-calculator"></i> Calculate Size</button>
+
+      <div class="bmi-indicator" id="bmi-indicator">
+        <div class="bmi-marker" id="bmi-marker" style="left: 50%;"></div>
+      </div>
+      <div class="bmi-labels">
+        <span>Underweight</span>
+        <span>Normal</span>
+        <span>Overweight</span>
+        <span>Obese</span>
+      </div>
+    </div>
+
+    <div id="detailed-tab" class="tab-content">
+      <div class="input-group">
+        <label for="detailed-gender">Gender</label>
+        <select id="detailed-gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label for="chest">Chest/Bust Circumference (cm)</label>
+        <input type="number" id="chest" min="50" max="150" placeholder="Measure around the fullest part" />
+      </div>
+
+      <div class="input-group">
+        <label for="waist">Waist Circumference (cm)</label>
+        <input type="number" id="waist" min="50" max="150" placeholder="Measure at natural waistline" />
+      </div>
+
+      <div class="input-group">
+        <label for="hips">Hip Circumference (cm) <span class="note">(Women only)</span></label>
+        <input type="number" id="hips" min="50" max="150" placeholder="Measure around the fullest part" />
+      </div>
+
+      <div class="input-group">
+        <label for="inseam">Inseam Length (cm) <span class="note">(For pants)</span></label>
+        <input type="number" id="inseam" min="50" max="100" placeholder="Measure from crotch to ankle" />
+      </div>
+
+      <div class="input-group">
+        <label for="detailed-category">Clothing Category</label>
+        <select id="detailed-category">
+          <option value="shirt">Shirt</option>
+          <option value="tshirt">T-Shirt</option>
+          <option value="pants">Pants</option>
+          <option value="jeans">Jeans</option>
+          <option value="hoodie">Hoodie</option>
+          <option value="jacket">Jacket</option>
+          <option value="dress">Dress (Women)</option>
+        </select>
+      </div>
+
+      <button onclick="calculateDetailedSize()"><i class="fas fa-calculator"></i> Calculate Size</button>
+    </div>
+
+    <div class="result" id="result" style="display: none;">
+      <div class="result-title">
+        <i class="fas fa-tag"></i>
+        <span id="result-title">Size Recommendation</span>
+      </div>
+      <div class="size-recommendation" id="size-recommendation"></div>
+      <div id="brand-comparison-title" style="font-weight: 600; margin-bottom: 10px;">Brand Size Comparison:</div>
+      <div class="brand-sizes" id="brand-sizes"></div>
+      <div class="note">
+        <i class="fas fa-exclamation-circle"></i> Sizes vary between brands and countries. Always check the specific brand's size chart before purchasing.
+      </div>
+    </div>
+
+    <div class="error" id="error"></div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Deactivate all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Activate selected tab
+      document.getElementById(tabName + '-tab').classList.add('active');
+      document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    }
+
+    function calculateSize() {
+      const gender = document.getElementById('gender').value;
+      const height = parseInt(document.getElementById('height').value);
+      const weight = parseInt(document.getElementById('weight').value);
+      const category = document.getElementById('category').value;
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+
+      // Reset UI
+      errorDiv.textContent = '';
+      resultDiv.style.display = 'none';
+
+      // Validate inputs
+      if (!height || !weight) {
+        errorDiv.textContent = 'Please enter all required values.';
+        return;
+      }
+
+      if (height < 140 || height > 220 || weight < 30 || weight > 150) {
+        errorDiv.textContent = 'Please enter realistic values for height (140-220cm) and weight (30-150kg).';
+        return;
+      }
+
+      // Calculate BMI for reference (not used in sizing, just for visualization)
+      const bmi = weight / Math.pow(height/100, 2);
+      updateBmiIndicator(bmi);
+
+      // Calculate clothing size based on category and gender
+      let sizeData = calculateClothingSize(gender, height, weight, category);
+      
+      // Display results
+      document.getElementById('result-title').textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Size Recommendation`;
+      document.getElementById('size-recommendation').innerHTML = `
+        <p>Your recommended size: <strong>${sizeData.size}</strong></p>
+        <p>Fit type: ${sizeData.fit}</p>
+      `;
+      
+      // Generate brand comparisons
+      generateBrandComparisons(sizeData.size, category, gender);
+      
+      resultDiv.style.display = 'block';
+    }
+
+    function calculateDetailedSize() {
+      const gender = document.getElementById('detailed-gender').value;
+      const chest = parseInt(document.getElementById('chest').value);
+      const waist = parseInt(document.getElementById('waist').value);
+      const hips = parseInt(document.getElementById('hips').value) || 0;
+      const inseam = parseInt(document.getElementById('inseam').value) || 0;
+      const category = document.getElementById('detailed-category').value;
+      const resultDiv = document.getElementById('result');
+      const errorDiv = document.getElementById('error');
+
+      // Reset UI
+      errorDiv.textContent = '';
+      resultDiv.style.display = 'none';
+
+      // Validate inputs
+      if (!chest || !waist || (gender === 'female' && !hips) || (category === 'pants' && !inseam)) {
+        errorDiv.textContent = 'Please enter all required measurements.';
+        return;
+      }
+
+      // Calculate clothing size based on detailed measurements
+      let sizeData = calculateDetailedClothingSize(gender, chest, waist, hips, inseam, category);
+      
+      // Display results
+      document.getElementById('result-title').textContent = `${category.charAt(0).toUpperCase() + category.slice(1)} Size Recommendation`;
+      document.getElementById('size-recommendation').innerHTML = `
+        <p>Your recommended size: <strong>${sizeData.size}</strong></p>
+        <p>Fit type: ${sizeData.fit}</p>
+      `;
+      
+      // Generate brand comparisons
+      generateBrandComparisons(sizeData.size, category, gender);
+      
+      resultDiv.style.display = 'block';
+    }
+
+    function calculateClothingSize(gender, height, weight, category) {
+      // This is a simplified sizing algorithm - real implementations would use more complex formulas
+      let size = '';
+      let fit = 'Regular';
+      
+      // Calculate body type index (simplified)
+      const bmi = weight / Math.pow(height/100, 2);
+      
+      if (category === 'shirt' || category === 'tshirt') {
+        if (gender === 'male') {
+          if (height < 165 && chest < 90) size = 'S';
+          else if (height < 175 && chest < 100) size = 'M';
+          else if (height < 185 && chest < 110) size = 'L';
+          else size = 'XL';
+          
+          if (bmi > 25) fit = 'Relaxed';
+          if (bmi > 30) fit = 'Oversized';
+        } else {
+          if (height < 160 && chest < 85) size = 'S';
+          else if (height < 170 && chest < 95) size = 'M';
+          else if (height < 180 && chest < 105) size = 'L';
+          else size = 'XL';
+          
+          if (bmi > 24) fit = 'Relaxed';
+          if (bmi > 29) fit = 'Oversized';
+        }
+      }
+      else if (category === 'pants' || category === 'jeans') {
+        // Pants sizing is typically based on waist measurement
+        const waistSize = (gender === 'male') ? 
+          Math.round(weight * 0.45 - height * 0.2 + 30) : 
+          Math.round(weight * 0.4 - height * 0.15 + 28);
+        
+        size = waistSize.toString();
+        fit = (bmi < 18.5) ? 'Slim' : (bmi > 25) ? 'Relaxed' : 'Regular';
+      }
+      else if (category === 'hoodie' || category === 'jacket') {
+        // Outerwear tends to be more relaxed
+        if (gender === 'male') {
+          if (height < 165) size = 'S';
+          else if (height < 175) size = 'M';
+          else if (height < 185) size = 'L';
+          else size = 'XL';
+        } else {
+          if (height < 160) size = 'S';
+          else if (height < 170) size = 'M';
+          else if (height < 180) size = 'L';
+          else size = 'XL';
+        }
+        fit = 'Regular';
+      }
+      else if (category === 'dress') {
+        // Dress sizes typically follow women's standard sizing
+        const dressSize = Math.round(chest / 2.54 - 24); // Convert cm to inches and calculate size
+        size = dressSize.toString();
+        if (dressSize < 4) size = 'XS';
+        else if (dressSize < 6) size = 'S';
+        else if (dressSize < 8) size = 'M';
+        else if (dressSize < 10) size = 'L';
+        else size = 'XL';
+        
+        fit = (bmi < 18.5) ? 'Petite' : (bmi > 25) ? 'Plus' : 'Regular';
+      }
+      
+      return { size, fit };
+    }
+
+    function calculateDetailedClothingSize(gender, chest, waist, hips, inseam, category) {
+      let size = '';
+      let fit = 'Regular';
+      
+      if (category === 'shirt' || category === 'tshirt') {
+        if (gender === 'male') {
+          if (chest < 92) size = 'S';
+          else if (chest < 102) size = 'M';
+          else if (chest < 112) size = 'L';
+          else size = 'XL';
+        } else {
+          if (chest < 87) size = 'S';
+          else if (chest < 97) size = 'M';
+          else if (chest < 107) size = 'L';
+          else size = 'XL';
+        }
+        
+        // Determine fit based on waist-chest ratio
+        const ratio = waist / chest;
+        if (ratio < 0.85) fit = 'Slim';
+        else if (ratio > 0.95) fit = 'Relaxed';
+      }
+      else if (category === 'pants' || category === 'jeans') {
+        // For men, pants size is typically waist measurement in inches
+        if (gender === 'male') {
+          size = Math.round(waist / 2.54).toString();
+          fit = (inseam < 76) ? 'Short' : (inseam > 84) ? 'Long' : 'Regular';
+        } else {
+          // Women's pants sizing is more complex
+          if (waist < 68 && hips < 92) size = 'S';
+          else if (waist < 76 && hips < 100) size = 'M';
+          else if (waist < 84 && hips < 108) size = 'L';
+          else size = 'XL';
+          
+          fit = (inseam < 74) ? 'Petite' : (inseam > 82) ? 'Tall' : 'Regular';
+        }
+      }
+      else if (category === 'hoodie' || category === 'jacket') {
+        if (gender === 'male') {
+          if (chest < 96) size = 'S';
+          else if (chest < 104) size = 'M';
+          else if (chest < 112) size = 'L';
+          else size = 'XL';
+        } else {
+          if (chest < 91) size = 'S';
+          else if (chest < 99) size = 'M';
+          else if (chest < 107) size = 'L';
+          else size = 'XL';
+        }
+        fit = 'Regular';
+      }
+      else if (category === 'dress') {
+        // Women's dress sizes based on bust measurement
+        const dressSize = Math.round(chest / 2.54 - 24); // Convert cm to inches and calculate size
+        size = dressSize.toString();
+        if (dressSize < 4) size = 'XS';
+        else if (dressSize < 6) size = 'S';
+        else if (dressSize < 8) size = 'M';
+        else if (dressSize < 10) size = 'L';
+        else size = 'XL';
+        
+        // Determine fit based on waist-hip ratio
+        const ratio = waist / hips;
+        if (ratio < 0.75) fit = 'Curvy';
+        else if (ratio > 0.85) fit = 'Straight';
+      }
+      
+      return { size, fit };
+    }
+
+    function generateBrandComparisons(baseSize, category, gender) {
+      const brandSizesDiv = document.getElementById('brand-sizes');
+      brandSizesDiv.innerHTML = '';
+      
+      // This is a simplified brand comparison - real data would come from a database
+      const brands = {
+        'shirt': [
+          {name: 'H&M', sizes: {S: '36-38', M: '39-41', L: '42-44', XL: '45-47'}},
+          {name: 'Zara', sizes: {S: 'XS', M: 'S', L: 'M', XL: 'L'}},
+          {name: 'Uniqlo', sizes: {S: 'S', M: 'M', L: 'L', XL: 'XL'}},
+          {name: 'Ralph Lauren', sizes: {S: 'S', M: 'M', L: 'L', XL: 'XL'}},
+        ],
+        'tshirt': [
+          {name: 'Nike', sizes: {S: 'S', M: 'M', L: 'L', XL: 'XL'}},
+          {name: 'Adidas', sizes: {S: 'XS-S', M: 'S-M', L: 'M-L', XL: 'L-XL'}},
+          {name: 'Puma', sizes: {S: 'S', M: 'M', L: 'L', XL: 'XL'}},
+          {name: 'Tommy Hilfiger', sizes: {S: 'S', M: 'M', L: 'L', XL: 'XL'}},
+        ],
+        'pants': [
+          {name: 'Levi\'s', sizes: {S: '28-30', M: '32-34', L: '36-38', XL: '40-42'}},
+          {name: 'Wrangler', sizes: {S: '30-31', M: '32-33', L: '34-36', XL: '38-40'}},
+          {name: 'Diesel', sizes: {S: '28-30', M: '31-33', L: '34-36', XL: '38-40'}},
+          {name: 'Calvin Klein', sizes: {S: '28-30', M: '31-33', L: '34-36', XL: '38-40'}},
+        ],
+        'jeans': [
+          {name: 'Levi\'s', sizes: {S: '28-30', M: '32-34', L: '36-38', XL: '40-42'}},
+          {name: 'Lee', sizes: {S: '28-30', M: '32-34', L: '36-38', XL: '40-42'}},
+          {name: 'Guess', sizes: {S: '27-29', M: '30-32', L: '33-35', XL: '36-38'}},
+          {name: 'True Religion', sizes: {S: '28-30', M: '31-33', L: '34-36', XL: '37-39'}},
+        ],
+        'dress': [
+          {name: 'Mango', sizes: {S: '4', M: '6', L: '8', XL: '10'}},
+          {name: 'Forever 21', sizes: {S: 'XS', M: 'S', L: 'M', XL: 'L'}},
+          {name: 'Zara', sizes: {S: 'XS', M: 'S', L: 'M', XL: 'L'}},
+          {name: 'H&M', sizes: {S: '34', M: '36', L: '38', XL: '40'}},
+        ]
+      };
+      
+      const categoryBrands = brands[category] || brands['shirt']; // Default to shirts if category not found
+      
+      categoryBrands.forEach(brand => {
+        const brandDiv = document.createElement('div');
+        brandDiv.className = 'brand-size';
+        brandDiv.innerHTML = `
+          <div class="brand-name">${brand.name}</div>
+          <div>${brand.sizes[baseSize] || 'Check size chart'}</div>
+        `;
+        brandSizesDiv.appendChild(brandDiv);
+      });
+    }
+
+    function updateBmiIndicator(bmi) {
+      const bmiMarker = document.getElementById('bmi-marker');
+      
+      // Position marker based on BMI (underweight <18.5, normal 18.5-25, overweight 25-30, obese >30)
+      let position = 0;
+      if (bmi < 18.5) position = (bmi/18.5) * 25;
+      else if (bmi < 25) position = 25 + ((bmi-18.5)/6.5) * 25;
+      else if (bmi < 30) position = 50 + ((bmi-25)/5) * 25;
+      else position = 75 + (Math.min(1, (bmi-30)/20) * 25);
+      
+      bmiMarker.style.left = `${position}%`;
+    }
+  </script>
 </body>
 </html>
