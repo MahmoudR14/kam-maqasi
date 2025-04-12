@@ -4,31 +4,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>كام مقاسي</title>
+  <meta name="description" content="كام مقاسي - أداة لقياس الملابس بدقة وسهولة">
+  <title>كام مقاسي - حدد مقاسك بدقة</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1 id="header-title">كام مقاسي</h1>
+  <header role="banner">
+    <h1 id="header-title" aria-label="اسم التطبيق: كام مقاسي">كام مقاسي</h1>
     <p id="header-subtitle">سهولة بدقة مقاسك حدد</p>
-    <div class="top-buttons">
-      <button class="login-btn" id="login-btn">الدخول تسجيل</button>
-      <button class="register-btn" id="register-btn">حساب إنشاء</button>
-      <button class="lang-toggle" id="lang-toggle">EN</button>
-      <button class="mode-toggle" id="mode-toggle">🌓</button>
-    </div>
+    <nav class="top-buttons" aria-label="أدوات التطبيق">
+      <button class="login-btn" id="login-btn" aria-label="تسجيل الدخول">الدخول/تسجيل</button>
+      <button class="register-btn" id="register-btn" aria-label="إنشاء حساب">حساب إنشاء</button>
+      <button class="lang-toggle" id="lang-toggle" aria-label="تبديل اللغة">EN</button>
+      <button class="mode-toggle" id="mode-toggle" aria-label="تبديل الوضع المظلم">🌓</button>
+    </nav>
   </header>
-  <main class="container">
-    <div class="progress-bar">
-      <div class="progress-step active" id="step1">1. الفئة اختر</div>
+  
+  <main class="container" role="main">
+    <div class="progress-bar" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="5">
+      <div class="progress-step active" id="step1" aria-current="step">1. الفئة اختر</div>
       <div class="progress-step" id="step2">2. النوع اختر</div>
       <div class="progress-step" id="step3">3. القياسات أدخل</div>
       <div class="progress-step" id="step4">4. الدفع</div>
       <div class="progress-step" id="step5">5. النتيجة</div>
     </div>
-    <div id="app-content">جاري التحميل...</div>
+    
+    <section id="app-content" aria-live="polite">
+      <p>اختر فئة للبدء...</p>
+    </section>
   </main>
-  <footer><p>&copy; 2025 كام مقاسي - جميع الحقوق محفوظة.</p></footer>
-  <script src="script.js"></script>
+  
+  <footer role="contentinfo">
+    <p>&copy; 2025 كام مقاسي - جميع الحقوق محفوظة.</p>
+  </footer>
+  
+  <script src="script.js" defer></script>
 </body>
 </html>
